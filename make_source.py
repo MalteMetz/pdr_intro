@@ -41,6 +41,8 @@ source.tractions = DirectedTractions(
     rake=-90.,  # direction of the stress drop vectors
     traction=1e6)  # length of the stress drop vectors in [Nm]
 
+print(source.get_magnitude(store))
+
 m = RuptureMap(
     source=source,
     lat=source.lat, lon=source.lon,
