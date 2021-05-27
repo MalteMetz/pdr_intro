@@ -336,9 +336,9 @@ view.show_plot()
                 <section>
                     <h6>Source magnitude</h6>
                     <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-3">
-magnitude = source.get_magnitude(store)  # use Pyrocko GF store
+magnitude = source.get_magnitude(store)
 
-print(magnitude)
+print("Mw: {}".format(magnitude))
                     </code></pre>
 
                     <p style="font-size: 75%;">will give Mw 7.08</p>
