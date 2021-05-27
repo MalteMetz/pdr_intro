@@ -109,7 +109,7 @@
                     <h6>Commonly used analytical crack models</h6>
                     <img style="margin:0; margin-bottom:0.5em; margin-right:0.3em; height: 9em;" src="./figures/background/haskell_circular.jpeg">
 
-                    <p style="font-size: 75%;">Sato & Hirasawa (1973),  Haskell (1964, 1966, 1969)</p>
+                    <p style="font-size: 75%;" align="right">Sato & Hirasawa (1973),  Haskell (1964, 1966, 1969)</p>
                 </section>
 
                 <section>
@@ -121,6 +121,23 @@
                         <li>No complex rupture front propagation possible</li>
                     </ul>
                 </section>
+
+
+                <section>
+                    <h6>Closest match so far - Rectangular Source</h6>
+
+                    <img style="margin:0; margin-bottom:0.5em; margin-right:0.3em; height: 2.5em;" src="./figures/background/source-rectangular.svg">
+
+                    <ul style="font-size: 75%">
+                        <li>Kinematic model</li>
+                        <li>Rupture propagation based on origin and preset rupture velocity</li>
+                        <li>Homogeneous slip with sharp slip drop at rupture edges</li> 
+                    </ul>
+
+                    <p style="font-size: 75%;" align="right"> following Heimann (2011)</p>
+                </section>
+
+
             </section>
 
             <section>
@@ -386,7 +403,8 @@ rupture_movie(
                 <section>
                     <h6>More features</h6>
                     <ul style="font-size: 75%;">
-                        <li>Source can be used in <em>seismosizer</em> waveform forward modelling as in <a href="https://pyrocko.org/docs/current/library/examples/gf_forward.html#calculate-synthetic-seismograms-from-a-local-gf-store" target="_blank">Pyrocko waveform forward modelling example</a></li>
+                        <li>Source can be used in <em>pyrocko.gf.seismosizer</em> waveform forward modelling as shown in <a href="https://pyrocko.org/docs/current/library/examples/gf_forward.html#calculate-synthetic-seismograms-from-a-local-gf-store" target="_blank">Pyrocko waveform forward modelling example</a></li>
+                        <li>Implementation into <em>Grond</em> in progress (<em>dyn_rupt</em> branch)</li>
                     </ul>
                 </section>
             </section>
@@ -400,7 +418,7 @@ rupture_movie(
                     <h6>New Pyrocko features:</h6>
                     <ul style="font-size: 75%">
                         <li>Calculation of Okada (1992) based dislocations and derivatives in an elastic half space</li>
-                        <li>Fully functional new quasi dynamic rupture model based on Dahm et al (2021)</li>
+                        <li>Fully functional new quasi dynamic rupture model based on <a href="https://academic.oup.com/gji/article/225/3/1586/6166782" target="_blank">Dahm et al. (2021)</a></li>
                         <li>Plotting functions for fast and user friendly source result display</li>
                     </ul>
                 </section>
