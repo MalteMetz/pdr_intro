@@ -1,0 +1,411 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Teaser PseudoDynamicRupture</title>
+
+    <link rel="stylesheet" href="reveal/dist/reset.css">
+    <link rel="stylesheet" href="reveal/dist/reveal.css">
+    <link rel="stylesheet" href="theme/pyrocko.css" id="theme">
+    <!--<link rel="stylesheet" href="dist/theme/moon.css" id="theme">-->
+
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="theme/highlight/gruvbox-light.css" id="highlight-theme">
+</head>
+<style>
+    .annot {
+        font-style: italic;
+        color: #ffbbaa;
+        padding-left: 1em;
+    }
+
+    .links {
+        border-top: 1px solid #665544;
+        padding-top: 0.5em;
+        font-size: 70%;
+        color: #aaaa88;
+        margin-top: 2em;
+        width: 100%;
+    }
+
+    .links li {
+        list-style-type: none;
+        display: inline-block;
+        margin-right: 1em;
+    }
+
+    .links a {
+        color: #aaaa88;
+    }
+
+    .editor {
+        margin: 1em;
+        border: 1px solid #665544;
+        border-radius: 0.2em;
+        background-color: #333322;
+    }
+
+    code.inline {
+        font-size: 80%;
+        background-color: #444435;
+        color: #ccccaa;
+    }
+
+    em {
+        color: #ccaa33;
+    }
+
+    .small {
+        font-size: 70%;
+    }
+
+    div.fbox {
+        display: flex;
+        vertical-align: top;
+        justify-content: space-evenly;
+    }
+
+    div.fitem {
+        flex-grow: 1;
+    }
+
+    div.left {
+      left:-8.33%;
+      text-align: center;
+      float: left;
+      width:50%;
+      z-index:-10;
+    }
+
+    div.right {
+      left:31.25%;
+      top: 75px;
+      float: right;
+      text-align: center;
+      z-index:-10;
+      width:50%;
+    }
+</style>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <section>
+                    <h2>Introduction to new Pseudo Dynamic Rupture model</h2>
+                    <p style="font-size:50%">Malte Metz, Marius Isken, Sebastian Heimann, Torsten Dahm</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>How is it working?</h2>
+                </section>
+
+                <section>
+                    <h6>Define rupture plane</h6>
+                    <img style="margin:0; margin-bottom:-0.6em; margin-right:0.3em; height: 12em;" src="./figures/methods/scetch_quasidynrup-0.png">
+                </section>
+
+                <section>
+                    <h6>Define stress drop</h6>
+                    <img style="margin:0; margin-bottom:-0.6em; margin-right:0.3em; height: 12em;" src="./figures/methods/scetch_quasidynrup-1.png">
+                </section>
+
+                <section>
+                    <h6>Get final static slip</h6>
+                    <img style="margin:0; margin-bottom:-0.6em; margin-right:0.3em; height: 12em;" src="./figures/methods/scetch_quasidynrup-2.png">
+
+                    <p style="font-size: 75%;">slip linked to stress drop using Okada (1992)</p>
+                </section>
+
+                <section>
+                    <h6>Get slip snap shots</h6>
+                    <img style="margin:0; margin-bottom:-0.6em; margin-right:0.3em; height: 12em;" src="./figures/methods/scetch_quasidynrup-3.png">
+                </section>
+
+            </section>
+
+            <section>
+                <section>
+                    <h2>How to use it within Pyrocko?</h2>
+
+                    <div class="links">
+                        <ul>
+                            <li>★ <a href="https://pyrocko.org/docs/v2020.10.15-unreleased/topics/pseudo-dynamic-rupture.html" target="_blank">Pyrocko Documentation</a></li>
+                        </ul>
+                    </div>                </section>
+
+                <section>
+                    <h6>Installation and testing</h6>
+                    <pre><code class="language-bash" data-trim data-noescape data-line-numbers="1-5|6-20">
+# Go into Pyrocko directory e.g. ~/src/pyrocko and
+git fetch --all  # get all Pyrocko development branches
+git checkout okada  # checkout okada branch
+sudo python3 setup.py install  # if python2 use python
+
+# If nosetests/nosetests3 is installed, check code:
+nosetests3 -s test.gf.test_gf_source_types
+nosetests3 -s test.gf.test_gf_static
+nosetests3 -s test.gf.test_modelling_okada
+
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Source generation</h6>
+                    <pre><code class="language-python" data-trim data-noescape data-line-numbers="">
+from pyrocko.util import stt
+from pyrocko.gf import PseudoDynamicRupture
+
+# Define source
+source = PseudoDynamicRupture(
+    lat=37.821, lon=26.868,
+    depth=1000.,
+    time=stt('2020-10-30 11:51:24.955471'),
+    strike=275.0, dip=57.5, rake=90.,
+    length=65000., width=25000.,
+    anchor='top',
+    nucleation_x=0.28, nucleation_y=0.66,
+    gamma=0.82,
+    nx=8, ny=5)
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Source generation - What are the parameters?</h6>
+                    <div class="fbox" style="vertical-align: top; width: 100%; font-size: 75%;">
+                        <div class="fitem">
+                            <table>
+                                <thead><tr>
+                                    <th>Parameter</th>
+                                    <th>Definition</th>
+                                    <th>Range</th>
+                                </tr></thead>
+                                <tbody>
+                                    <tr>
+                                    <td>gamma</td>
+                                        <td>\(\gamma = v_{rupture} / v_s\)</td>
+                                        <td>0 - ... </td>
+                                    </tr>
+                                    <tr>
+                                        <td>nx</td>
+                                        <td>Number of patches along strike</td>
+                                        <td>1 - ...</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ny</td>
+                                        <td>Number of patches down dip</td>
+                                        <td>1 - ...</td>
+                                    </tr>
+                                    <tr>
+                                        <td>nucleation_x</td>
+                                        <td>Hypocenter on fault along strike</td>
+                                        <td>-1 - 1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>nucleation_x</td>
+                                        <td>Hypocenter on fault down dip</td>
+                                        <td>-1 - 1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>lat, lon, depth</td>
+                                        <td>Fault anchor location</td>
+                                        <td></td>
+                                    </tr>                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h6>Get final static slip and plot it</h6>
+                    <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-7|8-11|12-21">
+from pyrocko.gf import LocalEngine  # for GF handling
+from pyrocko.plot.dynamic_rupture import RuptureMap
+
+# Load store
+engine = LocalEngine(store_superdirs=['.'])
+store = engine.get_store('ak135_2000km_1Hz')
+
+# Define source subfaults (patches) using store
+# ground model parameters
+source.discretize_patches(store)
+
+# Plot source dislocation on map and save
+m = RuptureMap(
+    source=source,
+    lat=source.lat, lon=source.lon,
+    radius=source.length)
+m.draw_dislocation()  # final static dislocation
+m.draw_time_contour(store)  # rupture front contour
+m.draw_nucleation_point()  # hypocenter
+m.draw_top_edge()  # Indicate top edge of fault
+m.save('map_final_dislocation.pdf')
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h6>Get final static slip and plot it</h6>
+                    <img style="margin:0; margin-bottom:-0.6em; margin-right:0.3em; height: 10em;"src="./figures/pyrocko/map_final_dislocation.svg">
+
+                    <p style="font-size: 75%;">Small slip? Lets fix that ...</p>
+                </section>
+
+                <section>
+                    <h6>Scale slip using Slip/Magnitude</h6>
+                    <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-3">
+# Scale slip giving maximum slip [m]
+source.slip = 1.2
+<!-- 
+# OR giving magnitude
+source.magnitude = 7.08 -->
+                    </code></pre>
+
+                    <p style="font-size: 75%;">which leads to ...</p>
+                </section>
+
+                <section>
+                    <h6>Scale slip using Tractions</h6>
+                    <img style="margin:0; margin-bottom:-0.6em; margin-right:0.3em; height: 10em;"src="./figures/pyrocko/map_final_dislocation_traction.svg">
+
+                </section>
+
+                <section>
+                    <h6>Scale slip using Tractions</h6>
+                    <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-6|7-9">
+# IMPORTANT reset all other scaling measures:
+# slip and rake
+source.slip = None
+<!-- source.magnitude = None -->
+source.rake = None
+
+source.tractions = DirectedTractions(
+    rake=-90.,  # direction of stress drop vector
+    traction=1e6)  # length of stress drop vector in [Nm]
+                    </code></pre>
+
+                    <p style="font-size: 75%;">will give an equivalent slip distribution</p>
+                </section>
+
+                <section>
+                    <h6>Source moment rate function and plot</h6>
+                        <pre><code class="language-python" data-trim data-noescape data-line-numbers="">
+from pyrocko.plot.dynamic_rupture import RuptureView
+
+view = RuptureView(source=source)
+view.draw_source_dynamics('stf', store)
+view.show_plot()
+                    </code></pre>
+
+                    <p style="font-size: 75%;">results in ...</p>
+                </section>
+
+                <section>
+                    <h6>Source moment rate function and plot</h6>
+                    <img style="margin:0; margin-bottom:-0.6em; margin-right:0.3em; height: 10em;"src="./figures/pyrocko/stf.svg">
+                </section>
+
+
+                <section>
+                    <h6>Create small movies/gifs</h6>
+                        <pre><code class="language-python" data-trim data-noescape data-line-numbers="">
+from pyrocko.plot.dynamic_rupture import rupture_movie
+
+rupture_movie(
+    source, store, 'dislocation',
+    plot_type='map')
+
+rupture_movie(
+    source, store, 'slip_rate',
+    plot_type='map')
+
+                    </code></pre>
+
+                    <p style="font-size: 75%;">results in ...</p>
+                </section>
+
+                <section>
+                    <h6>Create small movies/gifs</h6>
+                    <div class="left">
+                        <video autoplay muted playsinline width="450" loop>
+                            <source src="./movies/pyrocko/dislocation_map_movie.mp4" type="video/mp4"> Your browser does not support the video tag.
+                        </video>
+
+                        <p style="font-size: 75%;">Normalized slip</p>
+                    </div>
+
+                    <div class="right">
+                        <video autoplay muted playsinline width="450" loop>
+                            <source src="./movies/pyrocko/slip_rate_map_movie.mp4" type="video/mp4"> Your browser does not support the video tag.
+                        </video>
+
+                        <p style="font-size: 75%;">Normalized slip rate</p>
+                    </div>
+                </section>
+
+
+                <section>
+                    <h6>More features</h6>
+                    <ul style="font-size: 75%;">
+                        <li>Source can be used in <em>seismosizer</em> waveform forward modelling as in <a href="https://pyrocko.org/docs/current/library/examples/gf_forward.html#calculate-synthetic-seismograms-from-a-local-gf-store" target="_blank">Pyrocko waveform forward modelling example</a></li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Summary</h2>
+                </section>
+
+                <section>
+                    <h6>New Pyrocko features:</h6>
+                    <ul style="font-size: 75%">
+                        <li>Calculation of Okada (1992) based dislocations and derivatives in an elastic half space</li>
+                        <li>Fully functional new quasi dynamic rupture model based on Dahm et al (2021)</li>
+                        <li>Plotting functions for fast and user friendly source result display</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h6>Be aware!</h6>
+                    <ul style="font-size: 75%;">
+                        <li>Change of nucleation point location or time needs forced recalculation of patches</li>
+                        <pre><code class="language-python" data-trim data-noescape>
+source.discretize_patches(store, force=True)
+                        </code></pre>
+                        <li>When <em>rake</em> attribute is not None, <em>source.tractions</em> are ignored</li>
+                    </ul>
+                </section>
+
+
+            </section>
+
+
+        </div>
+    </div>
+
+    <script src="reveal/dist/reveal.js"></script>
+    <script src="reveal/plugin/notes/notes.js"></script>
+    <script src="reveal/plugin/markdown/markdown.js"></script>
+    <script src="reveal/plugin/highlight/highlight.js"></script>
+    <script>
+        // More info about initialization & config:
+        // - https://revealjs.com/initialization/
+        // - https://revealjs.com/config/
+        Reveal.initialize({
+            hash: true,
+
+            // Learn about plugins: https://revealjs.com/plugins/
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</body>
+
+</html>
