@@ -95,12 +95,12 @@
         <div class="slides">
             <section>
                 <section>
-                    <h2>Introduction to new Pseudo Dynamic Rupture model</h2>
+                    <h2>The Pseudo Dynamic Rupture model</h2>
                     <p style="font-size:50%">Malte Metz, Marius Isken, Sebastian Heimann, Torsten Dahm</p>
                 </section>
             </section>
 
-            <section>
+            <!-- <section>
                 <section>
                     <h2>Why do we need a new source model?</h2>
                 </section>
@@ -109,7 +109,7 @@
                     <h6>Commonly used analytical crack models</h6>
                     <img style="margin:0; margin-bottom:0.5em; margin-right:0.3em; height: 9em;" src="./figures/background/haskell_circular.jpeg">
 
-                    <p style="font-size: 75%;" align="right">Sato & Hirasawa (1973),  Haskell (1964, 1966, 1969)</p>
+                    <p style="font-size: 75%;" align="right">Sato & Hirasawa (1973), Haskell (1964, 1966, 1969)</p>
                 </section>
 
                 <section>
@@ -138,7 +138,7 @@
                 </section>
 
 
-            </section>
+            </section> -->
 
             <section>
                 <section>
@@ -172,31 +172,37 @@
             <section>
                 <section>
                     <h2>How to use it within Pyrocko?</h2>
+                    <h4>Source generation and setup</h4>
 
                     <div class="links">
                         <ul>
-                            <li>★ <a href="https://pyrocko.org/docs/v2020.10.15-unreleased/topics/pseudo-dynamic-rupture.html" target="_blank">Pyrocko Documentation</a></li>
-                            <li>★ <a href="https://academic.oup.com/gji/article/225/3/1586/6166782" target="_blank">Methods: Dahm et al. (2021)</a></li>
+                            <li>★ <a href="https://pyrocko.org/docs/current/topics/pseudo-dynamic-rupture.html" target="_blank">Installation</a></li>
+                            <li>★ <a href="https://pyrocko.org/docs/current/topics/pseudo-dynamic-rupture.html" target="_blank">Documentation</a></li>
+                            <li>★ <a href="https://academic.oup.com/gji/article/225/3/1586/6166782" target="_blank">Dahm et al. (2021)</a></li>
                         </ul>
-                    </div>                </section>
-
-                <section>
-                    <h6>Installation and testing</h6>
-                    <pre><code class="language-bash" data-trim data-noescape data-line-numbers="1-5|6-20">
-# Go into Pyrocko directory e.g. ~/src/pyrocko and
-git fetch --all  # get all Pyrocko development branches
-git checkout okada  # checkout okada branch
-sudo python3 setup.py install  # if python2 use python
-
-# If nosetests/nosetests3 is installed, check code:
-nosetests3 -s test.gf.test_gf_source_types
-nosetests3 -s test.gf.test_gf_static
-nosetests3 -s test.gf.test_modelling_okada
-
-                    </code></pre>
+                    </div>
                 </section>
 
                 <section>
+                    <h6>Content</h6>
+                    <ul>
+                        <li><a href="#/generatesource">Source generation</a></li>
+                        <li><a href="#/slipandplot">Get slip and generate map plot</a></li>
+                        <li>rescale slip using</li>
+                        <ul>
+                            <li><a href="#/rescalepeakslip">peak slip</a></li>
+                            <li><a href="#/rescaletractions">tractions</a></li>
+                            <li><a href="#/rescalemagnitude">magnitude/moment</a></li>
+                        </ul>
+                        <li><a href="#/momentrate">Moment rate plot</a></li>
+                        <li><a href="#/centroid">Centroid extraction</a></li>
+                        <li><a href="#/gifmovie">Gif and movie generation</a></li>
+                    </ul>     
+
+                </section>
+
+
+                <section id="generatesource">
                     <h6>Source generation</h6>
                     <pre><code class="language-python" data-trim data-noescape data-line-numbers="">
 from pyrocko.util import stt
@@ -263,7 +269,7 @@ source = PseudoDynamicRupture(
                     </div>
                 </section>
 
-                <section>
+                <section id="slipandplot">
                     <h6>Get final static slip and plot it</h6>
                     <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-7|8-11|12-21">
 from pyrocko.gf import LocalEngine  # for GF handling
@@ -297,7 +303,7 @@ m.save('map_final_dislocation.pdf')
                     <p style="font-size: 75%;">Small slip? Lets fix that ...</p>
                 </section>
 
-                <section>
+                <section id="rescalepeakslip">
                     <h6>Scale slip using slip</h6>
                     <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-3">
 # Scale slip giving maximum slip [m]
@@ -316,7 +322,7 @@ source.magnitude = 7.08 -->
 
                 </section>
 
-                <section>
+                <section id="rescaletractions">
                     <h6>Scale slip using tractions</h6>
                     <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-5|6-9">
 # IMPORTANT reset all other scaling measures:
@@ -332,7 +338,7 @@ source.tractions = DirectedTractions(
                     <p style="font-size: 75%;"><a href="#/map_final_dislocation">will give an equivalent slip distribution</a></p>
                 </section>
 
-                <section>
+                <section id="rescalemagnitude">
                     <h6>Rescale slip using magnitude/moment</h6>
                     <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-4|5-8|9-12">
 # IMPORTANT reset all other scaling measures:
@@ -344,15 +350,15 @@ source.rake = -90.
 source.slip = 1.
 
 # Scale slip giving seismic moment m0 [Nm]
-source.rescale_slip(moment=4.677351412872e+19)
+source.rescale_slip(moment=4.677351412872e+19, store=store)
 # OR
-source.rescale_slip(magnitude=7.08)
+source.rescale_slip(magnitude=7.08, store=store)
                     </code></pre>
 
                     <p style="font-size: 75%;"><a href="#/map_final_dislocation">will give an equivalent slip distribution as well</a></p>
                 </section>
 
-                <section>
+                <section id="momentrate">
                     <h6>Source moment rate function and plot</h6>
                         <pre><code class="language-python" data-trim data-noescape data-line-numbers="">
 from pyrocko.plot.dynamic_rupture import RuptureView
@@ -381,8 +387,44 @@ print("Mw: {}".format(magnitude))
                     <p style="font-size: 75%;">will give "Mw 7.08"</p>
                 </section>
 
+                <section id="centroid">
+                    <h6>Centroid location and mechanism</h6>
+                    <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-3">
+                        centroid = source.get_centroid(store)
+                        
+                        print(centroid)
+                    </code></pre>
 
-                <section>
+                    <p style="font-size: 75%;"> yields</p>
+
+                    <pre><code class="language-shell" data-trim data-noescape data-line-numbers="">
+--- !pf.Event
+lat: 37.87407562819072
+lon: 26.873882634609338
+time: '2020-10-30 11:51:34.674575567'
+depth: 10299.289199739556
+magnitude: 7.079999999999977
+moment_tensor: !pf.MomentTensor
+  mnn: 4.2069191291047485e+19
+  mee: 3.2200879087675456e+17
+  mdd: -4.2391200081924235e+19
+  mne: 3.6805773216702147e+18
+  mnd: 1.969212053525339e+19
+  med: 1.72283730762069e+18
+  strike1: 275.0
+  dip1: 57.5
+  rake1: -90.00000000000006
+  strike2: 95.0000000000001
+  dip2: 32.500000000000014
+  rake2: -89.99999999999994
+  moment: 4.677351412871616e+19
+  magnitude: 7.079999999999977
+duration: 16.46420379887617
+                    </code></pre>
+
+                </section>
+
+                <section id="gifmovie">
                     <h6>Create small movies/gifs</h6>
                         <pre><code class="language-python" data-trim data-noescape data-line-numbers="">
 from pyrocko.plot.dynamic_rupture import rupture_movie
@@ -420,14 +462,247 @@ rupture_movie(
                 </section>
 
 
-                <section>
+                <!-- <section>
                     <h6>More features</h6>
                     <ul style="font-size: 75%;">
                         <li>Source can be used in <em>pyrocko.gf.seismosizer</em> waveform forward modelling as shown in <a href="https://pyrocko.org/docs/current/library/examples/gf_forward.html#calculate-synthetic-seismograms-from-a-local-gf-store" target="_blank">Pyrocko waveform forward modelling example</a></li>
                         <li>Implementation into <em>Grond</em> in progress (<em>dyn_rupt</em> branch)</li>
                     </ul>
+                </section> -->
+            </section>
+
+            <section>
+                <section>
+                    <h2>How to use it within Pyrocko?</h2>
+                    <h4>Forward modeling in Python</h4>
+
+                    <div class="links">
+                        <ul>
+                            <li>★ <a href="https://pyrocko.org/docs/current/library/examples/gf_forward.html#calculate-synthetic-seismograms-using-the-pseudo-dynamic-rupture" target="_blank">Pyrocko example</a></li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section >
+                    <h6>Import</h6>
+                    <pre><code class="language-python" data-trim data-noescape data-line-numbers="">
+import os.path as op
+
+from pyrocko import gf
+
+km = 1e3
+                    </code></pre>
+                </section>
+
+                <section >
+                    <h6>Green's function loading</h6>
+                    <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-3|4-9|10-14|15-17">
+# The store we are going extract data from:
+store_id = 'crust2_mf'
+
+# First, download a Greens Functions store. If you already have one that you
+# would like to use, you can skip this step and point the *store_superdirs* in
+# the next step to that directory.
+if not op.exists(store_id):
+    gf.ws.download_gf_store(site='kinherd', store_id=store_id)
+
+# We need a pyrocko.gf.Engine object which provides us with the traces
+# extracted from the store. In this case we are going to use a local
+# engine since we are going to query a local store.
+engine = gf.LocalEngine(store_superdirs=['.'])
+
+# The dynamic parameter used for discretization of the PseudoDynamicRupture are
+# extracted from the stores config file.
+store = engine.get_store(store_id)
+                    </code></pre>
+                </section>
+
+                <section >
+                    <h6>Generate source</h6>
+                    <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-10|11-13|14-16|17-22|23-25|26-27">
+# Let's define the source now with its extension, orientation etc.
+dyn_rupture = gf.PseudoDynamicRupture(
+    # At lat 0. and lon 0. (default)
+    north_shift=2.*km,
+    east_shift=2.*km,
+    depth=3.*km,
+    strike=43.,
+    dip=89.,
+    rake=88.,
+
+    length=26.*km,
+    width=12.*km,
+
+    nx=10,
+    ny=5,
+
+    # Relative nucleation between -1. and 1.
+    nucleation_x=-.6,
+    nucleation_y=.3,
+    slip=1.,
+    anchor='top',
+
+    # Threads used for modelling
+    nthreads=1,
+
+    # Force pure shear rupture
+    pure_shear=True)
+                    </code></pre>
+                </section>
+
+                <section >
+                    <h6>Rescale slip according to magnitude</h6>
+                    <pre><code class="language-python" data-trim data-noescape data-line-numbers="">
+# Recalculate slip, that rupture magnitude fits given magnitude
+dyn_rupture.rescale_slip(magnitude=7.0, store=store)
+                    </code></pre>
+                </section>
+
+                <section >
+                    <h6>Generate target</h6>
+                    <pre><code class="language-python" data-trim data-noescape data-line-numbers="">
+# Model waveforms for a single station target
+waveform_target = gf.Target(
+    lat=0.,
+    lon=0.,
+    east_shift=10.*km,
+    north_shift=10.*km,
+    store_id=store_id,
+    code=('', 'STA', '', 'Z'))
+                    </code></pre>
+                </section>
+
+                <section >
+                    <h6>Forward modeling and waveform display</h6>
+                    <pre><code class="language-python" data-trim data-noescape data-line-numbers="">
+result = engine.process(dyn_rupture, waveform_target)
+result.snuffle()
+                    </code></pre>
+
+                    <p style="font-size: 75%;"> which yields ...</p>
+                </section>
+
+                <section>
+                    <h6>Forward modeling and waveform display</h6>
+
+                    <img style="margin:0; margin-bottom:-0.6em; margin-right:0.3em; height: 12em;" src="./figures/pyrocko/gf_forward_pseudo_rupture_waveforms.png">
+
+                    <p style="font-size: 75%;">screen shot from Snuffler</p>
                 </section>
             </section>
+
+
+            <!-- GROND -->
+            <section>
+                <section>
+                    <h2>How to use it within Grond?</h2>
+                    <h4>Bayesian bootstrap based optimization</h4>
+
+                    <div class="links">
+                        <ul>
+                            <li>★ <a href="https://pyrocko.org/grond/docs/current/index.html" target="_blank">Grond manual</a></li>
+                            <li>★ <a href="https://data.pyrocko.org/presentations/pyrocko-workshop-dgg-2021/#/grond" target="_blank">Grond introduction</a></li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h6>Installation - Required from source</h6>
+                        <pre><code class="language-python" data-trim data-noescape data-line-numbers="1-3|4-6|7-10">
+# Create src directory (if not done already)
+mkdir src
+cd src
+# download grond
+git clone https://git.pyrocko.org/pyrocko/grond
+
+# Go into Grond directory ~/src/grond and
+git fetch --all  # get all Pyrocko development branches
+git checkout dyn_rupt  # checkout dyn_rupt branch
+sudo python3 setup.py install  # if python2 use python
+                        </code></pre>
+                </section>
+
+                <!-- Prepare Grond config -->
+                <section>
+                    <h6>Define a PDR problem - the config</h6>
+                        <pre><code class="language-yaml" data-trim data-noescape data-line-numbers="1-4|5-6|7-12|13-16|17-20|21-24|25-30|31-35|36-39|40-43|44-46|47-51|52-54|55-61">
+...
+problem_config: !grond.DynamicRuptureProblemConfig
+name_template: 'pdr_${event_name}'
+ranges:
+    time: '-20 .. 20 | add'  # Origin time
+
+    # Top edge center location with respect to
+    # input event
+    north_shift: '-40e3 .. 40e3'
+    east_shift: '-50e3 .. 50e3'
+    depth: '1e3 .. 15e3'
+
+    # Fault plane dimensions
+    length: '2e3 .. 30e3'
+    width: '2e3 .. 10e3'
+
+    # Fault plane orientation
+    strike: '-75. .. 165.'
+    dip: '0. .. 90'
+
+    # Mechanism and slip
+    rake: '60. .. 160.'
+    slip: '0.01 .. 5'
+
+    # Kinematic parameters (origin location
+    # and rupture velocity ratio)
+    nucleation_x: '-1. .. 1.'
+    nucleation_y: '-1. .. 1.'
+    gamma: '0.6 .. 0.8'
+
+    # Number of finite faults along
+    # strike (x) and downdip (y)
+    nx: '2 .. 5'
+    ny: '2 .. 4'
+
+# Number of parallel processes
+# (more than 4 does not make any difference)
+nthreads: 4
+
+# If True, reduces effort of target weighting by using
+# point sources
+point_source_target_balancing: True
+
+# Should be at one to obtain accurate unbiased results
+decimation_factor: 1
+
+# The adaptive resolution controls, if the number of
+# patches is increased within the inversion. 
+adaptive_resolution: linear  # How is it increased 
+adaptive_start: 3000  # At wich sample does it start
+
+# If True, no opening is allowed.
+pure_shear: True
+
+# Each fault patch is represented by a number of point
+# sources. If set to True, each of them can rupture at
+# a time according to the rupture propagation. If False
+# all point sources of one patch rupture at the same
+# time
+smooth_rupture: True
+...
+                    </code></pre>            
+                </section>
+                <!-- Start inversion and report -->
+
+                <section>
+                    <h6>Optimization run</h6>
+                        <pre><code class="language-bash" data-trim data-noescape data-line-numbers="">
+# Start optimization with threads given
+grond go config/pdr_config.gronf --threads=4
+
+# Once done, generate the report with
+grond report -so runs/pdr_run.grun --threads=4
+                        </code></pre>            
+                    </section>
+                </section>
+
 
             <section>
                 <section>
@@ -435,11 +710,12 @@ rupture_movie(
                 </section>
 
                 <section>
-                    <h6>New Pyrocko features:</h6>
+                    <h6>New features:</h6>
                     <ul style="font-size: 75%">
                         <li>Calculation of Okada (1992) based dislocations and derivatives in an elastic half space</li>
                         <li>Fully functional new quasi dynamic rupture model based on <a href="https://academic.oup.com/gji/article/225/3/1586/6166782" target="_blank">Dahm et al. (2021)</a></li>
                         <li>Plotting functions for fast and user friendly source result display</li>
+                        <li>New inversion method implemented within Grond and applied e.g. within <a href="https://doi.org/10.1029/2022JB024646" target="_blank">Metz et al. (2022)</a></li>
                     </ul>
                 </section>
 
