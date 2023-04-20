@@ -722,11 +722,12 @@ grond report -so runs/pdr_run.grun --threads=4
                 <section>
                     <h6>Be aware!</h6>
                     <ul style="font-size: 75%;">
-                        <li>Change of nucleation point location or time needs forced recalculation of patches</li>
+                        <li>Change of nucleation point location or time needs forced recalculation of patches:</li>
                         <pre><code class="language-python" data-trim data-noescape>
 source.discretize_patches(store, force=True)
                         </code></pre>
-                        <li>When <em>rake</em> attribute is not None, <em>source.tractions</em> are ignored</li>
+                        <li>When <em>rake</em> attribute is not None, <em>source.tractions</em> are ignored.</li>
+                        <li>Within the inversion there are strong trade-offs between width and nucleation_y.</li>
                     </ul>
                 </section>
 
